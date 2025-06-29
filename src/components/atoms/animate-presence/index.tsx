@@ -15,8 +15,8 @@ export const AnimatePresence: FC<AnimatePresenceProps> = ({ classNames, children
     return (
         <div
             className={cn(
-                "transition-all duration-300 ease-in-out",
-                show ? "grid grid-rows-1" : "grid grid-rows-0",
+                "grid transition-[grid-template-rows] duration-300 ease-in-out",
+                show ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
                 classNames?.wrapper
             )}
         >

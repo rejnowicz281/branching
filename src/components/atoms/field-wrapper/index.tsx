@@ -22,7 +22,7 @@ export const FieldWrapper: FC<FieldWrapperProps> = ({ helperText, errorMessage, 
                 <span
                     className={cn(
                         "text-xs",
-                        errorMessage ? "text-red-500" : "text-gray-600",
+                        errorMessage ? "text-destructive" : "text-gray-600",
                         !errorMessage && "invisible"
                     )}
                 >
