@@ -1,4 +1,4 @@
-import { ICard } from "@/types/card";
+import { IStoryNode } from "@/types/story-node";
 
 import { FormInputField } from "@/components/molecules/input-field/form";
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";
@@ -9,13 +9,13 @@ import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
 
 export const StoryCard = ({
-    card,
+    node,
     onDelete,
-    onAddLeafCard
+    onAddLeafNode
 }: {
-    card: ICard;
+    node: IStoryNode;
     onDelete: (id: string) => void;
-    onAddLeafCard: (card: ICard) => void;
+    onAddLeafNode: (node: IStoryNode) => void;
 }) => {
     const schema = z.object({
         title: z.string().min(1, "Title is required"),
@@ -27,18 +27,19 @@ export const StoryCard = ({
     });
 
     const onSubmit = form.handleSubmit((formData) => {
-        onAddLeafCard({
+        onAddLeafNode({
             id: Math.random().toString(36).substring(2, 15),
             title: formData.title,
-            description: formData.description
+            description: formData.description,
+            nodes: []
         });
     });
 
     return (
-        <Card key={card.id}>
+        <Card key={node.id}>
             <CardHeader>
-                <CardTitle>{card.title}</CardTitle>
-                <CardDescription>{card.description}</CardDescription>
+                <CardTitle>{node.title}</CardTitle>
+                <CardDescription>{node.description}</CardDescription>
                 <CardContent>
                     <FormProvider {...form}>
                         <form onSubmit={onSubmit}>
@@ -49,13 +50,13 @@ export const StoryCard = ({
                                     label: "Description"
                                 }}
                             />
-                            <Button type="submit">Add Leaf Card</Button>
+                            <Button type="submit">Add Leaf Node</Button>
                         </form>
                     </FormProvider>
                 </CardContent>
 
                 <CardFooter>
-                    <Button variant="outline" onClick={() => onDelete(card.id)}>
+                    <Button variant="outline" onClick={() => onDelete(node.id)}>
                         Delete
                     </Button>
                 </CardFooter>

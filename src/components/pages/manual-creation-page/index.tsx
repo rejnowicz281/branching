@@ -4,36 +4,37 @@ import { FormInputField } from "@/components/molecules/input-field/form";
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";
 import { Button } from "@/components/ui/button";
 import { useLocalState } from "@/hooks/use-local-state";
-import { ICard } from "@/types/card";
+import { IStoryNode } from "@/types/story-node";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import { StoryCard } from "./components/story-card";
+import { StoryCard } from "./components/story-node";
 
-const RecursiveStoryCard = ({
-    card,
-    onAddLeafCard,
+export const RecursiveStoryNode = ({
+    node,
+    onAddLeafNode,
     onDelete
 }: {
-    card: ICard;
-    onAddLeafCard: (newCard: ICard, parentId: string) => void;
+    node: IStoryNode;
+    onAddLeafNode: (newNode: IStoryNode, parentId: string) => void;
     onDelete: (id: string) => void;
 }) => {
     return (
         <div className={"flex-1 p-5 flex flex-col"}>
             <StoryCard
-                card={card}
-                onAddLeafCard={(newCard) => onAddLeafCard(newCard, card.id)}
+                node={node}
+                onAddLeafNode={(newNode) => onAddLeafNode(newNode, node.id)}
                 onDelete={(id) => onDelete(id)}
             />
 
-            {card.cards && card.cards.length > 0 && (
+            {node.nodes && node.nodes.length > 0 && (
                 <div className="flex">
-                    {card.cards.map((nestedCard) => (
-                        <RecursiveStoryCard
-                            key={nestedCard.id}
-                            card={nestedCard}
-                            onAddLeafCard={onAddLeafCard}
+                    {node.nodes.map((nestedNode) => (
+                        <RecursiveStoryNode
+                            key={nestedNode.id}
+                            node={nestedNode}
+                            onAddLeafNode={onAddLeafNode}
                             onDelete={onDelete}
                         />
                     ))}
@@ -44,7 +45,7 @@ const RecursiveStoryCard = ({
 };
 
 export const ManualCreationPage = () => {
-    const [story, setStory] = useLocalState<ICard[]>("story", []);
+    const [story, setStory] = useLocalState<IStoryNode[]>("story", []);
 
     const schema = z.object({
         title: z.string().min(1, "Title is required"),
@@ -62,48 +63,51 @@ export const ManualCreationPage = () => {
                 id: Date.now().toString(),
                 title: formData.title,
                 description: formData.description,
-                cards: []
+                nodes: []
             }
         ]);
     });
 
-    const handleDeleteCard = (id: string) => {
-        const deleteCardRecursively = (cards: ICard[], cardId: string): ICard[] => {
-            return cards.filter((card) => {
-                if (card.id === cardId) {
+    const handleDeleteNode = (id: string) => {
+        const deleteNodeRecursively = (nodes: IStoryNode[], nodeId: string): IStoryNode[] => {
+            return nodes.filter((node) => {
+                if (node.id === nodeId) {
                     return false;
                 }
-                if (card.cards) {
-                    card.cards = deleteCardRecursively(card.cards, cardId);
+                if (node.nodes) {
+                    node.nodes = deleteNodeRecursively(node.nodes, nodeId);
                 }
                 return true;
             });
         };
 
-        setStory((prev) => deleteCardRecursively(prev, id));
+        setStory((prev) => deleteNodeRecursively(prev, id));
     };
 
-    const handleAddLeafCard = (newCard: ICard, parentCardId: string) => {
-        const addCardToTree = (cards: ICard[]): ICard[] => {
-            return cards.map((card) => {
-                if (card.id === parentCardId) {
+    const handleAddLeafNode = (newNode: IStoryNode, parentNodeId: string) => {
+        const addNodeToTree = (nodes: IStoryNode[]): IStoryNode[] => {
+            return nodes.map((node) => {
+                if (node.id === parentNodeId) {
                     return {
-                        ...card,
-                        cards: [...(card.cards || []), newCard]
+                        ...node,
+                        nodes: [...(node.nodes || []), newNode]
                     };
                 }
                 return {
-                    ...card,
-                    cards: card.cards ? addCardToTree(card.cards) : []
+                    ...node,
+                    nodes: node.nodes ? addNodeToTree(node.nodes) : []
                 };
             });
         };
 
-        setStory((prev) => addCardToTree(prev));
+        setStory((prev) => addNodeToTree(prev));
     };
 
     return (
         <div className="p-12">
+            <Link href="/">
+                <Button variant="outline">Home</Button>
+            </Link>
             <div className="max-w-[1280px] mx-auto">
                 <FormProvider {...form}>
                     <form onSubmit={onSubmit}>
@@ -114,17 +118,17 @@ export const ManualCreationPage = () => {
                                 label: "Description"
                             }}
                         />
-                        <Button type="submit">Add Story Card</Button>
+                        <Button type="submit">Add Story Node</Button>
                     </form>
                 </FormProvider>
             </div>
             {story.length > 0 &&
-                story.map((card) => (
-                    <RecursiveStoryCard
-                        key={card.id}
-                        card={card}
-                        onAddLeafCard={handleAddLeafCard}
-                        onDelete={handleDeleteCard}
+                story.map((node) => (
+                    <RecursiveStoryNode
+                        key={node.id}
+                        node={node}
+                        onAddLeafNode={handleAddLeafNode}
+                        onDelete={handleDeleteNode}
                     />
                 ))}
         </div>

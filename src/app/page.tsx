@@ -1,5 +1,5 @@
-import { ManualCreationPage } from "@/components/pages/manual-creation-page";
+import { HomePage } from "@/components/pages/home-page";
 
 export default function Home() {
-    return <ManualCreationPage />;
+    return <HomePage />;
 }

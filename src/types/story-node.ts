@@ -1,6 +1,6 @@
-export type ICard = {
+export type IStoryNode = {
     id: string;
     title: string;
     description: string;
-    cards?: ICard[];
+    nodes?: IStoryNode[];
 };
