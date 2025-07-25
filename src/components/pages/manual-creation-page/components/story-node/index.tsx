@@ -1,4 +1,4 @@
-import { IStoryNode } from "@/types/story-node";
+import { IStoryNode } from "@/types/story";
 
 import { FormInputField } from "@/components/molecules/input-field/form";
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";

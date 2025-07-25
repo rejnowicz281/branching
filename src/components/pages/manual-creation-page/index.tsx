@@ -4,7 +4,7 @@ import { FormInputField } from "@/components/molecules/input-field/form";
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";
 import { Button } from "@/components/ui/button";
 import { useLocalState } from "@/hooks/use-local-state";
-import { IStoryNode } from "@/types/story-node";
+import { IStoryNode } from "@/types/story";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FormProvider, useForm } from "react-hook-form";
