@@ -1,6 +1,6 @@
 export interface IStoryParagraph {
     text: string;
-    branchCount?: number;
+    branches?: IStory[];
 }
 
 export interface IStory {

@@ -34,6 +34,9 @@ He didn’t need the dreams anymore—he carried their wonder inside him now. An
 A boy finds quiet magic in a mysterious box that sparks dreams of wonder. Though the dreams fade, their impact stays. He no longer needs the box to believe—its whisper lives in him. It's a story about how wonder, once found, becomes part of who we are.
 */
 
+import { generateEndingGenesis } from "@/services/api/generate-ending-genesis.api";
+import { generateShortenedStory } from "@/services/api/generate-shortened-story.api";
+import { generateStoryFromText } from "@/services/api/generate-story-from-text.api";
 import { IStory } from "@/types/story";
 
 /*
@@ -68,23 +71,28 @@ const refactoredFirstResponse = {
     storyBody: [
         {
             text: "Milo was a quiet, curious boy who asked odd questions like, “Do clouds sleep?” One day, he found a small wooden box in the woods.",
-            branchCount: 2
+            branches: [
+                // branch story,
+                // branch story
+            ]
         },
         {
             text: "It hummed softly, though it had no lock. That night, he dreamed of stars, strange creatures, and glowing worlds.",
-            branchCount: 0
+            branches: []
         },
         {
             text: "The box led him, answering his questions in whispers and light. When he woke, the box was still, its magic silent.",
-            branchCount: 0
+            branches: []
         },
         {
             text: "Milo kept it on a shelf, always clean. Sometimes, when the wind blew, it whispered, “More.” He smiled.",
-            branchCount: 1
+            branches: [
+                // branch story
+            ]
         },
         {
             text: "He didn’t need the dreams anymore—he carried their wonder inside him now. And he still believed.",
-            branchCount: 0
+            branches: []
         }
     ]
 };
@@ -120,7 +128,52 @@ const branch1Story = {
 
 export const storyBrancher = async (
     text: string,
-    minBranchesPerParagraph = 1,
+    index: number = 0,
+    parentEndingGenesis = "",
+    parentShortenedStory = "",
+    minBranchesPerParagraph = 0,
     maxBranchesPerParagraph = 2,
     maxParagraphLength = 100
-): Promise<IStory> => {};
+): Promise<IStory> => {
+    const [aiResponse, endingGenesis, shortenedStory] = await Promise.all([
+        generateStoryFromText(text, parentEndingGenesis, parentShortenedStory, maxParagraphLength),
+        generateEndingGenesis(text),
+        generateShortenedStory(text)
+    ]);
+
+    const aiResponseWithBranches: IStory = {
+        ...aiResponse,
+        storyBody: await Promise.all(
+            aiResponse.storyBody.map(async (storyParagraph) => {
+                const branchCount = Math.floor(
+                    Math.random() * (maxBranchesPerParagraph - minBranchesPerParagraph + 1) + minBranchesPerParagraph
+                );
+
+                const branches = [];
+
+                for (let i = 0; i < branchCount; i++) {
+                    const aiResponse = await storyBrancher(
+                        storyParagraph.text,
+                        index + 1,
+                        endingGenesis,
+                        shortenedStory,
+                        index < 2 ? minBranchesPerParagraph : 0,
+                        index < 2 ? maxBranchesPerParagraph : 0, // NOTE: should give user option to choose the max depth of recursion (right now it's 2)
+                        maxParagraphLength
+                    );
+
+                    branches.push(aiResponse);
+                }
+
+                return {
+                    ...storyParagraph,
+                    branches
+                };
+            })
+        )
+    };
+
+    console.log(aiResponseWithBranches, index);
+
+    return aiResponseWithBranches;
+};

@@ -4,6 +4,7 @@ import { FormInputField } from "@/components/molecules/input-field/form";
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";
 import { Button } from "@/components/ui/button";
 import { useLocalState } from "@/hooks/use-local-state";
+import { storyBrancher } from "@/lib/utils/story-brancher";
 import { IStoryNode } from "@/types/story";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -108,6 +109,7 @@ export const ManualCreationPage = () => {
             <Link href="/">
                 <Button variant="outline">Home</Button>
             </Link>
+            <Button onClick={() => storyBrancher("")}>Test</Button>
             <div className="max-w-[1280px] mx-auto">
                 <FormProvider {...form}>
                     <form onSubmit={onSubmit}>
