@@ -2,14 +2,13 @@
 
 import { FormTextareaField } from "@/components/molecules/textarea-field/form";
 import { Button } from "@/components/ui/button";
-import { BranchingStoryParagraph } from "@/modules/Brancher/components/story-paragraph/branching-story-paragraph";
 import { IStory } from "@/types/story";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowRight } from "lucide-react";
 import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
+import { StoryVisualizer } from "../../components/story-visualizer";
 import { generateStoryWithBranchIdeas } from "../../lib/utils/system-prompts/generate-story-with-branch-ideas";
 
 export const BrancherPage = () => {
@@ -44,16 +43,7 @@ export const BrancherPage = () => {
                 </form>
             </FormProvider>
 
-            <div className="flex gap-8">
-                {generatedStory
-                    ? generatedStory.map((paragraph, index) => (
-                          <div className="flex gap-8" key={index}>
-                              <BranchingStoryParagraph paragraph={paragraph} />
-                              {index != generatedStory.length - 1 && <ArrowRight className="self-center" />}
-                          </div>
-                      ))
-                    : null}
-            </div>
+            <StoryVisualizer story={generatedStory} />
         </div>
     );
 };

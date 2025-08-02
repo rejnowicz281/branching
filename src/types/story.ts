@@ -1,4 +1,4 @@
-export type BranchIdea = string | IStoryParagraph;
+export type BranchIdea = string | IStory;
 
 export type IStoryParagraph = {
     id: string;
