@@ -1,11 +1,10 @@
-export interface IStoryParagraph {
-    text: string;
-    branches?: IStory[];
-}
+export type BranchIdea = string | IStoryParagraph;
 
-export interface IStory {
-    storyTitle: string;
-    storyBody: IStoryParagraph[];
-}
+export type IStoryParagraph = {
+    id: string;
+    paragraphTitle: string;
+    paragraphText: string;
+    branchIdeas: BranchIdea[];
+};
 
-export type IStoryBody = IStoryParagraph[];
+export type IStory = IStoryParagraph[];

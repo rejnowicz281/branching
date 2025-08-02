@@ -1,5 +1,5 @@
-import { HomePage } from "@/components/pages/home-page";
+import { BrancherPage } from "@/modules/Brancher/pages/brancher-page";
 
 export default function Home() {
-    return <HomePage />;
+    return <BrancherPage />;
 }
